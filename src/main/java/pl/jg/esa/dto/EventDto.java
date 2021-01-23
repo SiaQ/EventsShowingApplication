@@ -10,6 +10,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 public class EventDto implements Serializable {
+    private Long id;
     private String title;
     private LocalDate startDate;
     private LocalDate endDate;
@@ -18,7 +19,8 @@ public class EventDto implements Serializable {
     @Override
     public String toString() {
         return "EventDto{" +
-                "title='" + title + '\'' +
+                "id=" + id +
+                ", title='" + title + '\'' +
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +
                 ", shortDescription='" + shortDescription + '\'' +

@@ -1,18 +1,22 @@
 package pl.jg.esa.controllers;
 
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import pl.jg.esa.services.EventService;
+import org.springframework.web.client.RestTemplate;
+import pl.jg.esa.dto.EventDto;
+
+import java.util.List;
 
 @Controller
 public class EventController {
 
-    private final EventService eventService;
+    private final RestTemplate restTemplate;
 
-    public EventController(EventService eventService) {
-        this.eventService = eventService;
+    public EventController(RestTemplateBuilder restTemplateBuilder) {
+        this.restTemplate = restTemplateBuilder.build();
     }
 
     @GetMapping("/search-events")
@@ -21,9 +25,13 @@ public class EventController {
             @RequestParam(required = false) String before,
             Model model
     ) {
+        String url = String.format("http://localhost:8080/api/events?dateFilter=true&after=%s&before=%s", after, before);
+
+        List<EventDto> eventList = restTemplate.getForObject(url, List.class);
+
         model.addAttribute("after", after);
         model.addAttribute("before", before);
-        model.addAttribute("events", eventService.getEventsBetween(after, before));
+        model.addAttribute("events", eventList);
 
         return "showFoundEventsView";
     }

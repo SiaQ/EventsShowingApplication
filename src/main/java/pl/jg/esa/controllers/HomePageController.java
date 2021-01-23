@@ -1,24 +1,33 @@
 package pl.jg.esa.controllers;
 
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import pl.jg.esa.services.EventService;
+import org.springframework.web.client.RestTemplate;
+import pl.jg.esa.dto.EventDto;
+
+import java.util.List;
 
 @Controller
 public class HomePageController {
 
-    private final EventService eventService;
+    private final RestTemplate restTemplate;
 
-    public HomePageController(EventService eventService) {
-        this.eventService = eventService;
+    public HomePageController(RestTemplateBuilder restTemplateBuilder) {
+        this.restTemplate = restTemplateBuilder.build();
     }
 
     @GetMapping("/")
     public String showHomePage(
             Model model
     ) {
-        model.addAttribute("events", eventService.getEvents());
+
+        List<EventDto> eventList = restTemplate.getForObject(
+                "http://localhost:8080/api/events",
+                List.class);
+
+        model.addAttribute("events", eventList);
         return "homePage";
     }
 }
